@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"sort"
+  "strings"
 )
 
 type StringPair struct {
@@ -33,6 +34,20 @@ func (s StringPairs) Vals() []string {
 	return vals
 }
 
+type StringMap map[string]interface{}
+
+func (m StringMap) String() string {
+  vals := []string{}
+  for k, v := range m {
+    if len(m) == 1 {
+      return fmt.Sprintf("%v", v)
+    } else {
+      vals = append(vals, fmt.Sprintf("%+v:%+v", k, v))
+    }
+  }
+  return strings.Join(vals, " ")
+}
+
 type ByKey struct{ StringPairs }
 
 func (s ByKey) Less(i, j int) bool { return s.StringPairs[i].Key < s.StringPairs[j].Key }
@@ -56,15 +71,10 @@ func main() {
 		var p StringPair
 		for k, v := range m {
 			switch v := v.(type) {
-			default:
-				p = StringPair{k, fmt.Sprintf("%v", v)}
-			case map[string]interface{}:
-				if len(v) == 1 {
-					//Do some logic here to extract the lone value in the map
-					p = StringPair{k, fmt.Sprintf("%v", v)}
-				} else {
-					p = StringPair{k, fmt.Sprintf("%+v", v)}
-				}
+        case map[string]interface{}:
+          p = StringPair{k, fmt.Sprint(StringMap(v))}
+        default:
+          p = StringPair{k, fmt.Sprintf("%v", v)}
 			}
 			s = append(s, &p)
 		}
