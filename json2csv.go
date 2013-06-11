@@ -53,18 +53,19 @@ func main() {
 		}
 		m := i.(map[string]interface{})
 		s := StringPairs{}
-    p StringPair
+    var p StringPair
 		for k, v := range m {
       switch v := v.(type) {
         default:
           fmt.Printf("unexpected type %T", v)
-        case map:
+        case map[string]interface{} : {
           if len(v) == 1 {
             //Do some logic here to extract the lone value in the map
-            p = StringPair(k, fmt.Sprintf("%v", v))
+            p = StringPair{k, fmt.Sprintf("%v", v)}
           } else {
-            p = StringPair(k, fmt.Sprintf("%+v", v)
+            p = StringPair{k, fmt.Sprintf("%+v", v)}
           }
+        }
       }
 			s = append(s, &p)
 		}
