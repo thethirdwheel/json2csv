@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"os"
 	"sort"
-  "strings"
+	"strings"
 )
 
 type StringPair struct {
@@ -37,15 +37,15 @@ func (s StringPairs) Vals() []string {
 type StringMap map[string]interface{}
 
 func (m StringMap) String() string {
-  vals := []string{}
-  for k, v := range m {
-    if len(m) == 1 {
-      return fmt.Sprintf("%v", v)
-    } else {
-      vals = append(vals, fmt.Sprintf("%+v:%+v", k, v))
-    }
-  }
-  return strings.Join(vals, " ")
+	vals := []string{}
+	for k, v := range m {
+		if len(m) == 1 {
+			return fmt.Sprintf("%v", v)
+		} else {
+			vals = append(vals, fmt.Sprintf("%+v:%+v", k, v))
+		}
+	}
+	return strings.Join(vals, " ")
 }
 
 type ByKey struct{ StringPairs }
@@ -68,15 +68,13 @@ func main() {
 		}
 		m := i.(map[string]interface{})
 		s := StringPairs{}
-		var p StringPair
 		for k, v := range m {
 			switch v := v.(type) {
-        case map[string]interface{}:
-          p = StringPair{k, fmt.Sprint(StringMap(v))}
-        default:
-          p = StringPair{k, fmt.Sprintf("%v", v)}
+			case map[string]interface{}:
+				s = append(s, &StringPair{k, fmt.Sprint(StringMap(v))})
+			default:
+				s = append(s, &StringPair{k, fmt.Sprintf("%v", v)})
 			}
-			s = append(s, &p)
 		}
 		sort.Sort(ByKey{s})
 		csvseq := s.Vals()
