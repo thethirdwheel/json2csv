@@ -1,3 +1,5 @@
+//json2csv converts homogenous arrays of json objects into comma-delimited text.
+//It takes output from stdin and writes to stdout
 package main
 
 import (
@@ -10,15 +12,20 @@ import (
 	"strings"
 )
 
+//StringPair is a struct holding two strings, Key and Val.
 type StringPair struct {
 	Key string
 	Val string
 }
 
+//StringPairs is a slice of *StringPair.
 type StringPairs []*StringPair
 
+//Len returns the lenght of a StringPairs slice.
 func (s StringPairs) Len() int      { return len(s) }
+//Swap exchanges to items in a StringPairs slice.
 func (s StringPairs) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
+//Keys returns a slice of strings containing the Key of each StringPair
 func (s StringPairs) Keys() []string {
 	keys := []string{}
 	for _, o := range s {
@@ -26,6 +33,7 @@ func (s StringPairs) Keys() []string {
 	}
 	return keys
 }
+//Vals returns a slice of strings containing the Val of each StringPair
 func (s StringPairs) Vals() []string {
 	vals := []string{}
 	for _, o := range s {
@@ -36,6 +44,7 @@ func (s StringPairs) Vals() []string {
 
 type StringMap map[string]interface{}
 
+//String writes a StringMap's contents, omitting keys for maps with only one key/value pair.
 func (m StringMap) String() string {
 	vals := []string{}
 	for k, v := range m {
@@ -59,7 +68,7 @@ func (s ByVal) Less(i, j int) bool { return s.StringPairs[i].Val < s.StringPairs
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	writer := csv.NewWriter(os.Stdout)
-  header := true
+	header := true
 	for scanner.Scan() {
 		var i interface{}
 		lineBytes := []byte(scanner.Text())
@@ -78,10 +87,10 @@ func main() {
 			}
 		}
 		sort.Sort(ByKey{s})
-    if header {
-      header = false
-      writer.Write(s.Keys())
-    }
+		if header {
+			header = false
+			writer.Write(s.Keys())
+		}
 		writer.Write(s.Vals())
 		writer.Flush()
 	}
