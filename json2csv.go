@@ -59,6 +59,7 @@ func (s ByVal) Less(i, j int) bool { return s.StringPairs[i].Val < s.StringPairs
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	writer := csv.NewWriter(os.Stdout)
+  header := true
 	for scanner.Scan() {
 		var i interface{}
 		lineBytes := []byte(scanner.Text())
@@ -77,8 +78,11 @@ func main() {
 			}
 		}
 		sort.Sort(ByKey{s})
-		csvseq := s.Vals()
-		writer.Write(csvseq)
+    if header {
+      header = false
+      writer.Write(s.Keys())
+    }
+		writer.Write(s.Vals())
 		writer.Flush()
 	}
 	if err := scanner.Err(); err != nil {
